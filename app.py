@@ -6,7 +6,7 @@ from datetime import datetime
 import os
 
 # Define the categories
-categories = ["Grocery Haul", "Fast Food/Restaurant", "Gas", "Monthly Rent", "Electricity Bill", "Water Bill"]
+categories = ["Grocery Haul", "Fast_Food/Restaurant", "Gas", "Rent", "Electricity Bill", "Water Bill", "Other"]
 
 # Define the file path for storing data
 file_path = "expenses.xlsx"
@@ -42,7 +42,7 @@ def add_expense():
 # Create the main window
 root = tk.Tk()
 root.title("Expense Tracker")
-root.geometry("400x250")
+root.geometry("350x250")
 root.resizable(False, False) 
 
 # Create and set the variables
