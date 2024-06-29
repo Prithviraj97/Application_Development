@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkcalendar import DateEntry
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -72,26 +72,80 @@ def update_pie_chart():
     canvas.draw()
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
+# Function to show weekly expenses
+def show_weekly_expenses():
+    selected_date = week_entry.get_date()
+    start_of_week = selected_date - timedelta(days=selected_date.weekday())
+    end_of_week = start_of_week + timedelta(days=6)
+    df = pd.read_excel(file_path)
+    df_week = df[(pd.to_datetime(df['Date']) >= start_of_week) & (pd.to_datetime(df['Date']) <= end_of_week)]
+    if df_week.empty:
+        messagebox.showinfo("No Data", "No expenses recorded for the selected week.")
+        return
+
+    df_grouped = df_week.groupby('Category')['Amount'].sum()
+    
+    fig, ax = plt.subplots(figsize=(6, 4))
+    df_grouped.plot(kind='pie', ax=ax, autopct='%1.1f%%')
+    ax.set_title(f'Weekly Expenses ({start_of_week.strftime("%m-%d-%Y")} to {end_of_week.strftime("%m-%d-%Y")})')
+    ax.set_ylabel('')  # Hide y-label for pie chart
+    
+    # Clear the previous chart
+    for widget in pie_chart_frame.winfo_children():
+        widget.destroy()
+    
+    # Add the new chart
+    canvas = FigureCanvasTkAgg(fig, master=pie_chart_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+# Function to show monthly expenses
+def show_monthly_expenses():
+    selected_date = month_entry.get_date()
+    selected_month = selected_date.strftime("%m-%Y")
+    df = pd.read_excel(file_path)
+    df['Month'] = pd.to_datetime(df['Date']).dt.strftime("%m-%Y")
+    df_month = df[df['Month'] == selected_month]
+    if df_month.empty:
+        messagebox.showinfo("No Data", "No expenses recorded for the selected month.")
+        return
+
+    df_grouped = df_month.groupby('Category')['Amount'].sum()
+    
+    fig, ax = plt.subplots(figsize=(6, 4))
+    df_grouped.plot(kind='pie', ax=ax, autopct='%1.1f%%')
+    ax.set_title(f'Monthly Expenses ({selected_month})')
+    ax.set_ylabel('')  # Hide y-label for pie chart
+    
+    # Clear the previous chart
+    for widget in pie_chart_frame.winfo_children():
+        widget.destroy()
+    
+    # Add the new chart
+    canvas = FigureCanvasTkAgg(fig, master=pie_chart_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
 # Create the main window
 root = tk.Tk()
 root.title("Expense Tracker")
-root.geometry("620x600")
+root.geometry("600x600")
 root.resizable(False, False)
 
 # Create and set the variables
 category_var = tk.StringVar(value=categories[0])
 amount_var = tk.StringVar()
 
-# Create and place the widgets with better formatting 
+# Create and place the widgets with better formatting
 main_frame = ttk.Frame(root, padding="10")
 main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
 ttk.Label(main_frame, text="Category:", font=("Helvetica", 12)).grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)
-category_menu = ttk.Combobox(main_frame, textvariable=category_var, values=categories, font=("Helvetica", 12), width=20)
+category_menu = ttk.Combobox(main_frame, textvariable=category_var, values=categories, font=("Helvetica", 12), width=25)
 category_menu.grid(row=0, column=1, padx=10, pady=10, sticky=tk.EW)
 
 ttk.Label(main_frame, text="Amount:", font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10, sticky=tk.W)
-amount_entry = ttk.Entry(main_frame, textvariable=amount_var, font=("Helvetica", 12), width=20)
+amount_entry = ttk.Entry(main_frame, textvariable=amount_var, font=("Helvetica", 12), width=25)
 amount_entry.grid(row=1, column=1, padx=10, pady=10, sticky=tk.EW)
 
 add_button = ttk.Button(main_frame, text="Add Expense", command=add_expense)
@@ -104,6 +158,22 @@ date_entry.grid(row=3, column=1, padx=10, pady=10, sticky=tk.EW)
 
 pie_chart_button = ttk.Button(main_frame, text="Show Pie Chart", command=update_pie_chart)
 pie_chart_button.grid(row=4, columnspan=2, pady=10)
+
+# Weekly expenses button and date picker
+ttk.Label(main_frame, text="Select Week:", font=("Helvetica", 12)).grid(row=5, column=0, padx=10, pady=10, sticky=tk.W)
+week_entry = DateEntry(main_frame, width=12, background='darkblue', foreground='white', borderwidth=2, font=("Helvetica", 12))
+week_entry.grid(row=5, column=1, padx=10, pady=10, sticky=tk.EW)
+
+weekly_expenses_button = ttk.Button(main_frame, text="Show Weekly Expenses", command=show_weekly_expenses)
+weekly_expenses_button.grid(row=6, columnspan=2, pady=10)
+
+# Monthly expenses button and date picker
+ttk.Label(main_frame, text="Select Month:", font=("Helvetica", 12)).grid(row=7, column=0, padx=10, pady=10, sticky=tk.W)
+month_entry = DateEntry(main_frame, width=12, background='darkblue', foreground='white', borderwidth=2, font=("Helvetica", 12))
+month_entry.grid(row=7, column=1, padx=10, pady=10, sticky=tk.EW)
+
+monthly_expenses_button = ttk.Button(main_frame, text="Show Monthly Expenses", command=show_monthly_expenses)
+monthly_expenses_button.grid(row=8, columnspan=2, pady=10)
 
 # Pie chart frame
 pie_chart_frame = ttk.Frame(root, padding="10")
