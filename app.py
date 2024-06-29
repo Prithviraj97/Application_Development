@@ -52,7 +52,7 @@ def update_bar_chart():
     df = pd.read_excel(file_path)
     df_grouped = df.groupby('Category')['Amount'].sum()
     
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 4))
     df_grouped.plot(kind='bar', ax=ax)
     ax.set_title('Total Expenses per Category')
     ax.set_ylabel('Amount')
@@ -78,7 +78,7 @@ def update_pie_chart():
     
     df_grouped = df_day.groupby('Category')['Amount'].sum()
     
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 4))
     df_grouped.plot(kind='pie', ax=ax, autopct='%1.1f%%')
     ax.set_title(f'Expenses for {selected_date}')
     ax.set_ylabel('')  # Hide y-label for pie chart
@@ -117,10 +117,6 @@ amount_entry.grid(row=1, column=1, padx=10, pady=10, sticky=tk.EW)
 add_button = ttk.Button(main_frame, text="Add Expense", command=add_expense)
 add_button.grid(row=2, columnspan=2, pady=10)
 
-# Bar chart frame
-bar_chart_frame = ttk.Frame(root, padding="10")
-bar_chart_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-
 # Date picker and pie chart button
 ttk.Label(main_frame, text="Select Date:", font=("Helvetica", 12)).grid(row=3, column=0, padx=10, pady=10, sticky=tk.W)
 date_entry = DateEntry(main_frame, width=12, background='darkblue', foreground='white', borderwidth=2, font=("Helvetica", 12))
@@ -128,6 +124,10 @@ date_entry.grid(row=3, column=1, padx=10, pady=10, sticky=tk.EW)
 
 pie_chart_button = ttk.Button(main_frame, text="Show Pie Chart", command=update_pie_chart)
 pie_chart_button.grid(row=4, columnspan=2, pady=10)
+
+# Bar chart frame
+bar_chart_frame = ttk.Frame(root, padding="10")
+bar_chart_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
 # Pie chart frame
 pie_chart_frame = ttk.Frame(root, padding="10")
