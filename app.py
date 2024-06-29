@@ -6,7 +6,7 @@ from datetime import datetime
 import os
 
 # Define the categories
-categories = ["Grocery Haul", "Fast_Food/Restaurant", "Gas", "Rent", "Electricity Bill", "Water Bill", "Other"]
+categories = ["Grocery Haul", "Fast_Food/Restaurant", "Gas", "Rent", "Electricity Bill", "Water Bill", "Shopping" ,"Other"]
 
 # Define the file path for storing data
 file_path = "expenses.xlsx"
