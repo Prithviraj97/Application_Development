@@ -76,7 +76,7 @@ def update_pie_chart():
 root = tk.Tk()
 root.title("Expense Tracker")
 root.geometry("620x600")
-root.resizable(False, False)
+root.resizable(True, True)
 
 # Create and set the variables
 category_var = tk.StringVar(value=categories[0])
