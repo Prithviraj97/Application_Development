@@ -29,7 +29,7 @@ def add_expense():
     amount = float(amount)
     date = datetime.now().strftime("%m-%d-%Y")
     
-    # Read the existing data
+    # Read the existing data 
     df = pd.read_excel(file_path)
     
     # Check if there is already an entry for the same category and date
