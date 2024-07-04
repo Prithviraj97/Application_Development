@@ -26,7 +26,7 @@ def add_expense():
     if not amount.replace('.', '', 1).isdigit():  # To allow for decimal amounts
         messagebox.showerror("Invalid Input", "Amount must be a number.")
         return
-    amount = float(amount)
+    amount = float(amount) 
     date = datetime.now().strftime("%m-%d-%Y")
     
     # Read the existing data 
